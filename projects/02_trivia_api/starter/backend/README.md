@@ -30,6 +30,14 @@ This will install all of the required packages we selected within the `requireme
 
 - [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#) is the extension we'll use to handle cross origin requests from our frontend server. 
 
+## Connect to the database
+- Change database config so it can connect to your local postgres database
+- set up your config file using the config.sample.py file provided for you
+- change the appropiate variables to your own values
+
+## Base URL
+http://locakhost:5000
+
 ## Database Setup
 With Postgres running, restore a database using the trivia.psql file provided. From the backend folder in terminal run:
 ```bash
@@ -72,21 +80,234 @@ This README is missing documentation of your endpoints. Below is an example for 
 
 Endpoints
 GET '/categories'
-GET ...
-POST ...
-DELETE ...
 
 GET '/categories'
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
+- Request Parameters: None
+- Returns: A list of categories with its type as values and a success value which indicates status of response.
 
+{
+  "categories": [
+    "Science",
+    "Art",
+    "Geography",
+    "History",
+    "Entertainment",
+    "Sports"
+  ],
+  "status code: 200,
+  "success": true
+}
+
+```
+
+GET '/questions'
+- Fetches Paginated questions
+- Request Parameters: None
+- Returns 
+```
+{
+"categories": [
+    "Science",
+    "Art",
+    "Geography",
+    "History",
+    "Entertainment",
+    "Sports"
+  ],
+"current_category": [
+    "Science",
+    "Art",
+    "Geography",
+    "History",
+    "Entertainment",
+    "Sports"
+  ],
+"questions": [
+    {
+      "answer": "Apollo 13",
+      "category": 5,
+      "difficulty": 4,
+      "id": 2,
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+    },
+    {
+      "answer": "Tom Cruise",
+      "category": 5,
+      "difficulty": 4,
+      "id": 4,
+      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+    },
+    {
+      "answer": "Edward Scissorhands",
+      "category": 5,
+      "difficulty": 3,
+      "id": 6,
+      "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+    },
+    {
+      "answer": "Brazil",
+      "category": 6,
+      "difficulty": 3,
+      "id": 10,
+      "question": "Which is the only team to play in every soccer World Cup tournament?"
+    },
+    {
+      "answer": "Uruguay",
+      "category": 6,
+      "difficulty": 4,
+      "id": 11,
+      "question": "Which country won the first ever soccer World Cup in 1930?"
+    },
+    {
+      "answer": "George Washington Carver",
+      "category": 4,
+      "difficulty": 2,
+      "id": 12,
+      "question": "Who invented Peanut Butter?"
+    },
+
+ [...]
+
+  ],
+  "success": true,
+  "total_questions": 19
+}
+```
+
+DELETE '/questions/<int:question_id>'
+- Delete's question by id
+- Request paramters: Requires ID to be passed in as a parameter
+- Returns
+```
+{
+  "deleted": 10, (where 10 is the id of the question)
+  "success": true
+}
+```
+
+POST '/questions'
+- Create a new question
+- Request Parameters: Question body
+- Returns
+```
+{
+  "created": 26, (This represents the ID of the new question)
+  "questions": [
+     {
+      "answer": "Uruguay",
+      "category": 6,
+      "difficulty": 4,
+      "id": 11,
+      "question": "Which country won the first ever soccer World Cup in 1930?"
+    },
+    {
+      "answer": "George Washington Carver",
+      "category": 4,
+      "difficulty": 2,
+      "id": 12,
+      "question": "Who invented Peanut Butter?"
+    },
+   
+   [...] (all the remaining questions in the database are added)
+
+  ],
+  "success": true,
+  "total_questions": 21
+}
+```
+
+POST '/questions/search'
+- Fetches question or list of questions and their categories that matches with the search term
+- Request parameters: searchTerm (Which is a string)
+- Returns 
+```
+{
+  "current_category": [
+    {
+      "id": 1,
+      "type": "Science"
+    },
+    {
+      "id": 2,
+      "type": "Art"
+    },
+
+   [...] (All current categories)
+
+  ],
+  "questions": [
+    {
+      "answer": "Jup",
+      "category": 1,
+      "difficulty": 1,
+      "id": 24,
+      "question": "Is this a test question?"
+    }
+
+    [...] (contains any additionaal questions that has that search term)
+  
+  ],
+  "success": true,
+  "total_questions": 20
+}
+```
+GET '/categories/<int:category_id>/questions'
+- Fetches questions by category ID
+- Request Paramters: Category Id
+- Returns 
+```
+{
+  "current_category": "2",
+  "questions": [
+    {
+      "answer": "Escher",
+      "category": 2,
+      "difficulty": 1,
+      "id": 16,
+      "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+    },
+    {
+      "answer": "Mona Lisa",
+      "category": 2,
+      "difficulty": 3,
+      "id": 17,
+      "question": "La Giaconda is better known as what?"
+    },
+    {
+      "answer": "One",
+      "category": 2,
+      "difficulty": 4,
+      "id": 18,
+      "question": "How many paintings did Van Gogh sell in his lifetime?"
+    },
+    {
+      "answer": "Jackson Pollock",
+      "category": 2,
+      "difficulty": 2,
+      "id": 19,
+      "question": "Which American artist was a pioneer of Abstract Expressionism, and a leading exponent of action painting?"
+    }
+  ],
+  "success": true,
+  "total_questions": 4
+}
+```
+POST '/quizzes'
+- Fetches questions to play quiz
+- Request Paramters: request body that contains (previous questions and current quiz category)
+- Returns
+```
+{
+  "question": {
+    "answer": "Jup",
+    "category": 1,
+    "difficulty": 1,
+    "id": 24,
+    "question": "Is this a test question?"
+  },
+  "success": true
+}
 ```
 
 
